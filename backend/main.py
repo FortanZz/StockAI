@@ -1,13 +1,13 @@
-from config import TICKERS, NEWS_LIMIT
+from backend.config import TICKERS, NEWS_LIMIT
 
-from data.news_fetcher import fetch_news_for_ticker
-from data.stock_fetcher import get_stock_data
+from backend.data.news_fetcher import fetch_news_for_ticker
+from backend.data.stock_fetcher import get_stock_data
 
-from processing.cleaner import clean_text
-from processing.aggregator import aggregate_sentiment
+from backend.processing.cleaner import clean_text
+from backend.processing.aggregator import aggregate_sentiment
 
-from ai.sentiment import get_sentiment
-from ai.predictor import predict
+from backend.ai.sentiment import get_sentiment
+from backend.ai.predictor import predict
 
 
 def analyze_stock(ticker):
@@ -40,7 +40,7 @@ def main():
     if user_input:
         tickers_to_run = [user_input]
     else:
-        from config import TICKERS
+        from backend.config import TICKERS
         tickers_to_run = TICKERS
 
     all_results = {}
