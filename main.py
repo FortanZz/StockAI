@@ -27,17 +27,25 @@ def analyze_stock(ticker):
     result = predict(avg_sentiment, price_trend)
 
     return {
-        "sentiment": round(avg_sentiment, 3),
-        "trend": round(price_trend, 3),
-        "prediction": result["prediction"],
-        "confidence": result["confidence"]
-    }
+    "sentiment": float(round(avg_sentiment, 3)),
+    "trend": float(round(price_trend, 3)),
+    "prediction": result["prediction"],
+    "confidence": float(result["confidence"])
+}
 
 
 def main():
+    user_input = input("Enter stock ticker (or press Enter for all): ").upper()
+
+    if user_input:
+        tickers_to_run = [user_input]
+    else:
+        from config import TICKERS
+        tickers_to_run = TICKERS
+
     all_results = {}
 
-    for ticker in TICKERS:
+    for ticker in tickers_to_run:
         try:
             result = analyze_stock(ticker)
             all_results[ticker] = result
@@ -45,8 +53,13 @@ def main():
             print(f"Error with {ticker}: {e}")
 
     print("\n--- FINAL RESULTS ---")
+
     for ticker, data in all_results.items():
-        print(f"{ticker}: {data}")
+        print(f"\n--- {ticker} ---")
+        print(f"Market Sentiment: {data['sentiment']}")
+        print(f"Recent Trend: {data['trend']}")
+        print(f"Prediction: {data['prediction']}")
+        print(f"Confidence: {data['confidence'] * 100:.1f}%")
 
 
 if __name__ == "__main__":
