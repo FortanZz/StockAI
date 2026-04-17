@@ -6,7 +6,6 @@ from backend.config import TICKERS
 
 app = FastAPI()
 
-# allow React frontend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -19,15 +18,32 @@ app.add_middleware(
 def analyze(query: str):
     query = query.upper()
 
+    # 🧠 NASDAQ MODE (NEW)
+    if query == "NASDAQ":
+        results = {}
+
+        for ticker in TICKERS:
+            try:
+                results[ticker] = analyze_stock(ticker)
+            except:
+                continue
+
+        return {
+            "type": "nasdaq",
+            "data": results
+        }
+
+    # stock mode
     if query in TICKERS:
         return {
             "type": "stock",
             "ticker": query,
             "data": analyze_stock(query)
         }
-    else:
-        return {
-            "type": "keyword",
-            "keyword": query,
-            "data": analyze_keyword(query)
-        }
+
+    # keyword mode
+    return {
+        "type": "keyword",
+        "keyword": query,
+        "data": analyze_keyword(query)
+    }

@@ -6,89 +6,98 @@ export default function App() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const analyze = async () => {
+  const search = async () => {
     if (!query) return;
 
     setLoading(true);
     setData(null);
 
-    try {
-      const res = await fetch(
-        `http://127.0.0.1:8000/analyze?query=${query}`
-      );
-      const result = await res.json();
-      setData(result);
-    } catch (err) {
-      console.error(err);
-    }
+    const res = await fetch(
+      `http://127.0.0.1:8000/analyze?query=${query}`
+    );
 
+    const json = await res.json();
+    setData(json);
     setLoading(false);
   };
 
-  const renderStock = () => (
-    <div className="grid">
-      <Card title="Prediction" value={data.data.prediction} />
-      <Card title="Confidence" value={`${(data.data.confidence * 100).toFixed(1)}%`} />
-      <Card title="Sentiment" value={data.data.sentiment} />
-      <Card title="Trend" value={data.data.trend} />
-    </div>
-  );
-
-  const renderKeyword = () => (
-    <div className="gridKeywords">
-      {Object.entries(data.data).map(([company, info]) => (
-        <div className="card" key={company}>
-          <div className="title">{company}</div>
-          <div>Mentions: {info.mentions}</div>
-          <div className={info.sentiment >= 0 ? "green" : "red"}>
-            Sentiment: {info.sentiment}
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-
   return (
-    <div className="app">
-      {/* SIDEBAR */}
-      <div className="sidebar">
-        <div className="logo">StockAI</div>
+    <div className="page">
+      <div className="center">
+        <h1 className="logo">StockAI Terminal</h1>
 
         <input
           className="input"
-          placeholder="Enter ticker or keyword..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          placeholder="AAPL / AI / NASDAQ"
+          onKeyDown={(e) => e.key === "Enter" && search()}
         />
 
-        <button className="button" onClick={analyze}>
+        <button className="button" onClick={search}>
           Analyze
         </button>
 
-        <div className="hint">Try: AAPL, NVDA, AI</div>
-      </div>
+        {loading && <p className="loading">Processing market data...</p>}
 
-      {/* MAIN */}
-      <div className="main">
-        {loading && <div className="loading">Analyzing market data...</div>}
+        {/* STOCK VIEW */}
+        {data?.type === "stock" && (
+          <div className="card">
+            <p>
+              Prediction:{" "}
+              <span className={data.data.prediction === "UP" ? "green" : "red"}>
+                {data.data.prediction}
+              </span>
+            </p>
 
-        {data?.type === "stock" && renderStock()}
-        {data?.type === "keyword" && renderKeyword()}
+            <p>
+              Confidence: {(data.data.confidence * 100).toFixed(1)}%
+            </p>
+
+            <p>
+              Sentiment:{" "}
+              <span className={data.data.sentiment >= 0 ? "green" : "red"}>
+                {data.data.sentiment}
+              </span>
+            </p>
+
+            <p>Trend: {data.data.trend}</p>
+          </div>
+        )}
+
+        {/* NASDAQ VIEW */}
+        {data?.type === "nasdaq" && (
+          <div className="grid">
+            {Object.entries(data.data).map(([ticker, v]) => (
+              <div className="card" key={ticker}>
+                <h3>{ticker}</h3>
+
+                <p>
+                  Prediction:{" "}
+                  <span className={v.prediction === "UP" ? "green" : "red"}>
+                    {v.prediction}
+                  </span>
+                </p>
+
+                <p>
+                  Confidence: {(v.confidence * 100).toFixed(1)}%
+                </p>
+
+                <p>
+                  Sentiment:{" "}
+                  <span className={v.sentiment >= 0 ? "green" : "red"}>
+                    {v.sentiment}
+                  </span>
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
 
         {!data && !loading && (
-          <div className="empty">Enter a stock or keyword to begin</div>
+          <p className="hint">Try: AAPL • AI • NASDAQ</p>
         )}
       </div>
-    </div>
-  );
-}
-
-/* CARD COMPONENT */
-function Card({ title, value }) {
-  return (
-    <div className="card">
-      <div className="title">{title}</div>
-      <div className="value">{value}</div>
     </div>
   );
 }
