@@ -21,8 +21,6 @@ def fetch_news_for_ticker(ticker, limit=5):
 
     return articles
 
-
-# ✅ NEW FUNCTION (keyword mode)
 def fetch_news_for_keyword(keyword, limit=10):
     links = [
         f"https://news.google.com/rss/search?q={keyword}",
