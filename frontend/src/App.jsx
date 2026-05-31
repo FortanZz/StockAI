@@ -49,8 +49,10 @@ export default function App() {
 
       const json = await res.json();
       setData(json);
-    } catch (err) {
-      setError(err.message || "Unable to reach the market service.");
+    } catch {
+      setError(
+        "Backend is not running. Start FastAPI on 127.0.0.1:8000, then try again."
+      );
     } finally {
       setLoading(false);
     }
