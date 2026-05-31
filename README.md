@@ -1,6 +1,10 @@
 # StockAI
 AI system to predict stock prices.
 
+Analysis runs are saved automatically to:
+
+`output/history/analysis_history.csv`
+
 ## How to run the project
 
 ### Start Backend

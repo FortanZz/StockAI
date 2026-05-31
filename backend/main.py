@@ -9,6 +9,7 @@ from backend.processing.extractor import extract_companies
 
 from backend.ai.sentiment import get_sentiment
 from backend.ai.predictor import predict
+from backend.utils.history import save_analysis_history
 
 
 def analyze_stock(ticker):
@@ -77,6 +78,11 @@ def main():
         try:
             result = analyze_stock(user_input)
             all_results[user_input] = result
+            save_analysis_history({
+                "type": "stock",
+                "ticker": user_input,
+                "data": result
+            })
         except Exception as e:
             print(f"Error with {user_input}: {e}")
 
@@ -92,6 +98,11 @@ def main():
     else:
         # KEYWORD MODE
         results = analyze_keyword(user_input)
+        save_analysis_history({
+            "type": "keyword",
+            "keyword": user_input,
+            "data": results
+        })
 
         print("\n--- KEYWORD RESULTS ---")
 
