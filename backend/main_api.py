@@ -19,7 +19,6 @@ app.add_middleware(
 def analyze(query: str):
     query = query.upper()
 
-    # 🧠 NASDAQ MODE (NEW)
     if query == "NASDAQ":
         results = {}
 

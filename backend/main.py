@@ -36,7 +36,6 @@ def analyze_stock(ticker):
     }
 
 
-# ✅ NEW FUNCTION
 def analyze_keyword(keyword):
     print(f"\nSearching for keyword: {keyword}")
 
